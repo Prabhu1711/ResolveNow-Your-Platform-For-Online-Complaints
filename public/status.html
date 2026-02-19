@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Complaint Status - ResolveNow</title>
+  <link rel="stylesheet" href="main.css" />
+  <style>
+    body {
+      background-color: #154e4e;
+      font-family: Arial, sans-serif;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .status-container {
+      max-width: 1000px;
+      margin: auto;
+      background-color: #0b3e3e;
+      padding: 25px;
+      border-radius: 8px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #0b3e3e;
+      color: white;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #245d5d;
+    }
+
+    tr:nth-child(even) {
+      background-color: #154e4e;
+    }
+  </style>
+</head>
+<body>
+  <div class="status-container">
+    <h2>Your Complaint Status</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Assigned Agent</th>
+          <th>Submitted At</th>
+        </tr>
+      </thead>
+      <tbody id="statusTable"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const userId = localStorage.getItem('userId');
+
+    async function loadUserComplaints() {
+      if (!userId) {
+        alert("User ID not found. Please log in.");
+        return;
+      }
+
+      try {
+        const res = await fetch('http://localhost:5003/api/complaints');
+        const complaints = await res.json();
+
+        const userComplaints = complaints.filter(c => c.userId === userId || c.userId?._id === userId);
+        const table = document.getElementById('statusTable');
+        table.innerHTML = '';
+
+        userComplaints.forEach(complaint => {
+          const row = document.createElement('tr');
+
+          row.innerHTML = `
+            <td>${complaint.title}</td>
+            <td>${complaint.description}</td>
+            <td>${complaint.status}</td>
+            <td>${complaint.assignedAgent?.name || 'Not Assigned'}</td>
+            <td>${new Date(complaint.submittedAt).toLocaleString()}</td>
+          `;
+
+          table.appendChild(row);
+        });
+      } catch (err) {
+        console.error('Failed to load complaint status:', err);
+      }
+    }
+
+    loadUserComplaints();
+  </script>
+</body>
+</html>

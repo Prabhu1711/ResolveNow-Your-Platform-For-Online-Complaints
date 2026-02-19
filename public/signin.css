@@ -1,0 +1,86 @@
+/* Body background and center content */
+body {
+  background-color: rgb(26, 83, 85);
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Login box styling */
+#login {
+  background-color: #1f4e52; /* Dark teal */
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+  color: #ffffff;
+  border: 2px solid #58a2c4;
+}
+
+/* Headings */
+#login h2 {
+  font-size: 1.3em;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+#login h5 {
+  font-weight: normal;
+  font-size: 0.95em;
+  color: #dddddd;
+  margin-bottom: 20px;
+}
+
+/* Input fields */
+#login input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  margin-bottom: 14px;
+  border-radius: 6px;
+  border: 1px solid #1a2e2f;
+  font-size: 0.9em;
+  background-color: #cde7eb; /* Light teal background */
+  color: #000000;
+}
+
+/* Button */
+#login button {
+  padding: 10px;
+  width: 100%;
+  font-size: 0.95em;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#login button:hover {
+  background-color: #333333;
+}
+
+/* Link */
+#login a {
+  color: #e0e0e0;
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+#login a:hover {
+  text-decoration: underline;
+}
+
+/* Paragraph below form */
+#login p {
+  font-size: 0.9em;
+  color: #dddddd;
+  margin-top: 10px;
+}

@@ -1,0 +1,98 @@
+/* Body styling with flex to center content below header */
+body {
+  background-color: rgb(26, 83, 85);
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Header section */
+header {
+  width: 100%;
+  background-color: #444;
+  color: white;
+  padding: 15px 0;
+  text-align: center;
+  font-size: 1.2em;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Form container wrapper to center it vertically */
+.form-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-top: 30px; /* Space below the header */
+}
+
+/* Styled form */
+#form {
+  background-color: #1f4e52;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  max-width: 340px;
+  color: #ffffff;
+  text-align: center;
+  border: 2px solid #58a2c4;
+  margin-top: 50px;
+}
+
+/* Input and select */
+#form input,
+#form select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  margin-bottom: 14px;
+  border-radius: 6px;
+  border: 1px solid #1a2e2f;
+  font-size: 0.9em;
+  background-color: #cde7eb;
+  color: #000000;
+}
+
+/* Button */
+#form button {
+  padding: 10px;
+  width: 100%;
+  font-size: 0.95em;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#form button:hover {
+  background-color: #333333;
+}
+
+/* Links */
+#form a {
+  color: #e0e0e0;
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+#form a:hover {
+  text-decoration: underline;
+}
+
+#form h2 {
+  font-size: 1.3em;
+  color: #ffffff;
+}
+
+#form p {
+  font-size: 0.9em;
+  color: #dddddd;
+}

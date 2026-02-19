@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="main.css">
+  <style>
+    body {
+      background-color: #154e4e;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .dashboard-container {
+      max-width: 1200px;
+      margin: auto;
+      background: #0b3e3e;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #f5f5f5;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #0b3e3e;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px 16px;
+      text-align: left;
+      color: #fff;
+    }
+
+    th {
+      background-color: #245d5d;
+    }
+
+    tr:nth-child(even) {
+      background-color: #124545;
+    }
+
+    select, button {
+      padding: 6px 10px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    select {
+      background-color: #fff;
+      color: #000;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1e7e34;
+    }
+
+    .assigned-text {
+      font-size: 12px;
+      color: lightgreen;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <h2>Admin Dashboard - Assign Agents</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Complaint Title</th>
+          <th>User Name</th>
+          <th>Status</th>
+          <th>Assign Agent</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="complaintsTable"></tbody>
+    </table>
+  </div>
+
+  <script>
+    let agentsList = [];
+
+    async function fetchAgents() {
+      try {
+        const res = await fetch('http://localhost:5003/api/auth/agents');
+        agentsList = await res.json();
+      } catch (err) {
+        console.error('Failed to load agents:', err);
+      }
+    }
+
+    async function loadComplaints() {
+      try {
+        const res = await fetch('http://localhost:5003/api/complaints');
+        const complaints = await res.json();
+        const table = document.getElementById('complaintsTable');
+        table.innerHTML = '';
+
+        complaints.forEach((complaint) => {
+          const assignedAgentId = complaint.assignedAgent?._id || complaint.assignedAgent;
+          const row = document.createElement('tr');
+
+          row.innerHTML = `
+            <td>${complaint.title}</td>
+            <td>${complaint.name}</td>
+            <td>${complaint.status}</td>
+            <td>
+              <select id="agent-${complaint._id}">
+                <option value="">Select Agent</option>
+                ${agentsList.map(agent => `
+                  <option value="${agent._id}" ${agent._id === assignedAgentId ? 'selected' : ''}>
+                    ${agent.name}
+                  </option>
+                `).join('')}
+              </select>
+            </td>
+            <td>
+              <button onclick="assignAgent('${complaint._id}')">Assign</button>
+              ${assignedAgentId ? `<div class="assigned-text">Assigned</div>` : ''}
+            </td>
+          `;
+
+          table.appendChild(row);
+        });
+      } catch (err) {
+        console.error('Failed to load complaints:', err);
+      }
+    }
+
+    async function assignAgent(complaintId) {
+      const agentSelect = document.getElementById(`agent-${complaintId}`);
+      const agentId = agentSelect.value;
+
+      if (!agentId) {
+        alert('Please select an agent');
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://localhost:5003/api/complaints/${complaintId}/assign`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ agentId })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert('Agent assigned successfully');
+          loadComplaints();
+        } else {
+          alert(data.error || 'Failed to assign agent');
+        }
+      } catch (err) {
+        console.error('Error assigning agent:', err);
+      }
+    }
+
+    async function init() {
+      await fetchAgents();
+      await loadComplaints();
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Complaint Register</title>
+  <link rel="stylesheet" href="registercomplaintform.css" />
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">ComplaintCare</div>
+    <ul class="nav-links">
+      <li><a href="#">Complaint Register</a></li>
+      <li><a style="color: white;" href="status.html">Status</a></li>
+    </ul>
+  </nav>
+
+  <div class="form-container">
+    <form class="complaint-form" onsubmit="submitComplaint(event)">
+      <div class="form-group full-width">
+        <label for="title">Complaint Title</label>
+        <input type="text" id="title" placeholder="Short title of complaint" required />
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" placeholder="Enter your name" required />
+        </div>
+        <div class="form-group">
+          <label for="address">Address</label>
+          <input type="text" id="address" placeholder="Enter your address" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label for="city">City</label>
+          <input type="text" id="city" placeholder="Enter city" required />
+        </div>
+        <div class="form-group">
+          <label for="state">State</label>
+          <input type="text" id="state" placeholder="Enter state" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label for="pincode">Pincode</label>
+          <input type="text" id="pincode" placeholder="Enter pincode" required />
+        </div>
+        <div class="form-group">
+          <label for="status">Status</label>
+          <input type="text" id="status" value="Pending" readonly />
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="description">Description</label>
+        <textarea id="description" placeholder="Describe the issue" required></textarea>
+      </div>
+
+      <div class="form-group full-width center-btn">
+        <button type="submit">Register</button>
+      </div>
+    </form>
+  </div>
+
+  <footer>
+    <p>ComplaintCare<br>&copy; 2024</p>
+  </footer>
+
+  <script>
+    async function submitComplaint(event) {
+      event.preventDefault();
+
+      const userId = localStorage.getItem('userId');
+      const title = document.getElementById('title').value;
+      const name = document.getElementById('name').value;
+      const address = document.getElementById('address').value;
+      const city = document.getElementById('city').value;
+      const state = document.getElementById('state').value;
+      const pincode = document.getElementById('pincode').value;
+      const status = document.getElementById('status').value;
+      const description = document.getElementById('description').value;
+
+      try {
+        const res = await axios.post('http://localhost:5003/api/complaints', {
+          userId,
+          title,
+          name,
+          address,
+          city,
+          state,
+          pincode,
+          status,
+          description
+        });
+
+        alert(res.data.message);
+        window.location.href = 'user_dashboard.html';
+      } catch (err) {
+        alert(err.response?.data?.error || 'Failed to submit complaint');
+      }
+    }
+  </script>
+</body>
+</html>

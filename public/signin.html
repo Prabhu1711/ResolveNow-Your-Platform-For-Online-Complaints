@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signin - ResolveNow</title>
+  <link rel="stylesheet" href="signin.css" />
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <div id="login">
+    <h2>Signin to ResolveNow</h2>
+    <form onsubmit="signin(event)">
+      <label for="email">Email:</label>
+      <input type="email" id="email" required /><br />
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" required /><br />
+
+      <button type="submit">Sign In</button>
+    </form>
+  </div>
+
+  <script>
+    async function signin(event) {
+      event.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await axios.post('http://localhost:5003/api/auth/login', {
+          email,
+          password
+        });
+
+        alert(res.data.message);
+
+        // Store ID and role
+        localStorage.setItem('userId', res.data.user._id);
+        localStorage.setItem('role', res.data.user.role);
+
+        // Redirect based on role
+        const role = res.data.user.role;
+        if (role === 'admin') {
+          window.location.href = 'admin_dashboard.html';
+        } else if (role === 'agent') {
+          localStorage.setItem('agentId', res.data.user._id); // ✅ this line added
+          window.location.href = 'agent_dashboard.html';
+        } else {
+          window.location.href = 'registercomplaintform.html';
+        }
+
+      } catch (err) {
+        alert(err.response?.data?.error || 'Login failed');
+      }
+    }
+  </script>
+</body>
+</html>

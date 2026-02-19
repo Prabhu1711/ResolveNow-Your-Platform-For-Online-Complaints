@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agent Dashboard</title>
+  <link rel="stylesheet" href="main.css" />
+  <style>
+    body {
+      background-color: #154e4e;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    .dashboard-container {
+      max-width: 1200px;
+      margin: auto;
+      background-color: #0b3e3e;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #0b3e3e;
+      color: white;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+
+    th {
+      background-color: #245d5d;
+    }
+
+    select, button {
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      background-color: #2e8b8b;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1f6e6e;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <h2>Agent Dashboard - Assigned Complaints</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>User Name</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Update Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="agentComplaintsTable"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const agentId = localStorage.getItem('agentId'); // stored at login
+
+    async function loadAgentComplaints() {
+      if (!agentId) {
+        alert("Agent ID not found. Please login again.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://localhost:5003/api/complaints/assigned/${agentId}`);
+        const complaints = await res.json();
+
+        const table = document.getElementById('agentComplaintsTable');
+        table.innerHTML = '';
+
+        complaints.forEach((complaint) => {
+          const row = document.createElement('tr');
+
+          row.innerHTML = `
+            <td>${complaint.title}</td>
+            <td>${complaint.name}</td>
+            <td>${complaint.description}</td>
+            <td>${complaint.status}</td>
+            <td>
+              <select id="status-${complaint._id}">
+                <option value="Pending" ${complaint.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                <option value="In-Progress" ${complaint.status === 'In-Progress' ? 'selected' : ''}>In-Progress</option>
+                <option value="Completed" ${complaint.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                <option value="Incomplete" ${complaint.status === 'Incomplete' ? 'selected' : ''}>Incomplete</option>
+              </select>
+            </td>
+            <td>
+              <button onclick="updateStatus('${complaint._id}')">Update</button>
+            </td>
+          `;
+
+          table.appendChild(row);
+        });
+      } catch (err) {
+        console.error('Failed to load complaints:', err);
+      }
+    }
+
+    async function updateStatus(complaintId) {
+      const statusSelect = document.getElementById(`status-${complaintId}`);
+      const status = statusSelect.value;
+
+      try {
+        const res = await fetch(`http://localhost:5003/api/complaints/${complaintId}/status`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert('Status updated successfully');
+          loadAgentComplaints();
+        } else {
+          alert(data.error || 'Failed to update status');
+        }
+      } catch (err) {
+        console.error('Error updating status:', err);
+      }
+    }
+
+    loadAgentComplaints();
+  </script>
+</body>
+</html>

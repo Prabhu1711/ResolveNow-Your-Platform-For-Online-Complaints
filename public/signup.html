@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signup - ResolveNow</title>
+  <link rel="stylesheet" href="signup.css" />
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>ResolveNow - Signup</h1>
+  </header>
+
+  <div class="form-wrapper">
+    <form id="form" onsubmit="signup(event)">
+      <h2>Create Your Account</h2>
+
+      <input type="text" id="name" placeholder="Full Name" required />
+
+      <input type="email" id="email" placeholder="Email" required />
+
+      <input type="password" id="password" placeholder="Password" required />
+
+      <select id="role" required>
+        <option value="" disabled selected>Select Role</option>
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+        <option value="agent">Agent</option>
+      </select>
+
+      <button type="submit">Sign Up</button>
+      <p>Already have an account? <a href="signin.html">Login here</a></p>
+    </form>
+  </div>
+
+  <script>
+    async function signup(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+
+      try {
+        const res = await axios.post('http://localhost:5003/api/auth/signup', {
+          name,
+          email,
+          password,
+          role
+        });
+
+        alert(res.data.message);
+        window.location.href = 'signin.html';
+      } catch (err) {
+        alert(err.response?.data?.error || 'Signup failed');
+      }
+    }
+  </script>
+</body>
+</html>
